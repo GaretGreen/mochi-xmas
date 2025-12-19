@@ -2,6 +2,10 @@
 
 A tiny Christmas-present “game” for friends: you get three choices — pet Mochi, feed Mochi, or quit — and each choice shows a modal with a random Mochi photo + reaction.
 
+Festive extras:
+- Snowfall overlay.
+- Background music toggle (starts only after clicking due to browser autoplay rules).
+
 ## Add/replace Mochi photos
 - Drop images into the top-level `photos/` folder.
 - Supported formats: png, jpg/jpeg, webp, gif.
@@ -25,3 +29,9 @@ In GitHub:
 - Settings → Pages → set Source to GitHub Actions.
 
 Note: `vite.config.js` uses `base: './'` so the app works when served from a sub-path.
+
+## Deploy (Netlify)
+Netlify is configured via `netlify.toml`:
+- Build command: `npm run build`
+- Publish directory: `dist/`
+- SPA fallback redirect to `/index.html`

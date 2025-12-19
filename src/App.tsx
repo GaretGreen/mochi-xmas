@@ -1,9 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import Snowfall from './components/Snowfall'
+import useFestiveMusic from './hooks/useFestiveMusic'
 
-function Modal({ open, title, children, onClose }) {
+type Action = 'pet' | 'feed' | 'quit'
+
+type ModalProps = {
+  open: boolean
+  title: string
+  children: ReactNode
+  onClose?: () => void
+}
+
+function Modal({ open, title, children, onClose }: ModalProps) {
   useEffect(() => {
     if (!open) return
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose?.()
     }
     window.addEventListener('keydown', onKey)
@@ -37,23 +48,25 @@ function Modal({ open, title, children, onClose }) {
   )
 }
 
-function App() {
-  const [action, setAction] = useState(null) // 'pet' | 'feed' | 'quit' | null
+export default function App() {
+  const [action, setAction] = useState<Action | null>(null)
   const [open, setOpen] = useState(false)
-  const [imageUrl, setImageUrl] = useState(null)
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [reaction, setReaction] = useState('')
+  const { enabled: musicOn, toggle: toggleMusic, supported: musicSupported } = useFestiveMusic()
 
   // Eagerly import any images placed in the top-level photos/ folder
-  const imageUrls = useMemo(() => {
+  const imageUrls = useMemo<string[]>(() => {
     const modules = import.meta.glob('../photos/*.{png,jpg,jpeg,webp,gif}', {
       query: '?url',
       import: 'default',
       eager: true,
-    })
+    }) as Record<string, string>
+
     return Object.values(modules)
   }, [])
 
-  const titleFor = (a) => {
+  const titleFor = (a: Action | null) => {
     switch (a) {
       case 'pet':
         return 'You pet Mochi! 🐾'
@@ -66,8 +79,8 @@ function App() {
     }
   }
 
-  const messageFor = (a) => {
-    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
+  const messageFor = (a: Action) => {
+    const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)]
     switch (a) {
       case 'pet':
         return pick([
@@ -87,8 +100,6 @@ function App() {
           'Until next time. Mochi-Bär will be here.',
           'Bye for now — give Mochi a pet later!',
         ])
-      default:
-        return ''
     }
   }
 
@@ -98,7 +109,7 @@ function App() {
     return imageUrls[idx]
   }
 
-  const onChoose = (a) => {
+  const onChoose = (a: Action) => {
     setAction(a)
     setImageUrl(pickRandomImage())
     setReaction(messageFor(a))
@@ -113,10 +124,23 @@ function App() {
 
   return (
     <div className="min-h-dvh bg-slate-900 text-slate-100">
+      <Snowfall />
       <div className="mx-auto w-full max-w-4xl px-4 py-10 text-center">
         <header>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Mochi-Bär</h1>
           <p className="mt-2 text-slate-200/80">A tiny Christmas surprise</p>
+          <div className="mt-4 flex justify-center">
+            <button
+              type="button"
+              className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold backdrop-blur transition hover:border-lime-400 disabled:opacity-50"
+              onClick={toggleMusic}
+              aria-pressed={musicOn}
+              disabled={!musicSupported}
+              title={musicSupported ? 'Toggle background music' : 'Audio not supported in this browser'}
+            >
+              Music: {musicOn ? 'On' : 'Off'}
+            </button>
+          </div>
         </header>
 
         <div className="mt-8 flex justify-center">
@@ -137,7 +161,11 @@ function App() {
           )}
         </div>
 
-        <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3" role="group" aria-label="Choose an action">
+        <div
+          className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3"
+          role="group"
+          aria-label="Choose an action"
+        >
           <button
             className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
             onClick={() => onChoose('pet')}
@@ -170,5 +198,3 @@ function App() {
     </div>
   )
 }
-
-export default App
