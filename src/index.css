@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Keep global styles minimal; prefer Tailwind utility classes. */
+html,
+body {
+  height: 100%;
+}
