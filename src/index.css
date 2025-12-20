@@ -7,3 +7,33 @@ html,
 body {
   height: 100%;
 }
+
+body {
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+}
+
+@layer base {
+  :root {
+    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+  }
+
+  html,
+  body {
+    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+  }
+
+  button,
+  input,
+  select,
+  textarea,
+  optgroup,
+  option {
+    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+  }
+}
