@@ -53,7 +53,14 @@ export default function App() {
   const [open, setOpen] = useState(false)
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [reaction, setReaction] = useState('')
-  const { enabled: musicOn, toggle: toggleMusic, supported: musicSupported } = useFestiveMusic()
+  const {
+    enabled: musicOn,
+    toggle: toggleMusic,
+    supported: musicSupported,
+    melodyId,
+    setMelodyId,
+    melodies,
+  } = useFestiveMusic()
 
   // Eagerly import any images placed in the top-level photos/ folder
   const imageUrls = useMemo<string[]>(() => {
@@ -129,7 +136,7 @@ export default function App() {
         <header>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Mochi-Bär</h1>
           <p className="mt-2 text-slate-200/80">A tiny Christmas surprise</p>
-          <div className="mt-4 flex justify-center">
+          <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <button
               type="button"
               className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold backdrop-blur transition hover:border-lime-400 disabled:opacity-50"
@@ -140,6 +147,21 @@ export default function App() {
             >
               Music: {musicOn ? 'On' : 'Off'}
             </button>
+
+            <label className="flex items-center gap-2 text-sm text-slate-200/80">
+              <span className="whitespace-nowrap">Melody</span>
+              <select
+                className="rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 backdrop-blur transition hover:border-lime-400"
+                value={melodyId}
+                onChange={(e) => setMelodyId(e.target.value as typeof melodyId)}
+              >
+                {melodies.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
         </header>
 
