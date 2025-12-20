@@ -1,20 +1,11 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import Snowfall from './components/Snowfall'
-import useMidiMusic from './hooks/useMidiMusic'
+import { useEffect, useMemo, useState } from 'react'
+import Snowfall from './components/Snowfall.jsx'
+import useMidiMusic from './hooks/useMidiMusic.js'
 
-type Action = 'pet' | 'feed' | 'quit'
-
-type ModalProps = {
-  open: boolean
-  title: string
-  children: ReactNode
-  onClose?: () => void
-}
-
-function Modal({ open, title, children, onClose }: ModalProps) {
+function Modal({ open, title, children, onClose }) {
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e) => {
       if (e.key === 'Escape') onClose?.()
     }
     window.addEventListener('keydown', onKey)
@@ -48,34 +39,24 @@ function Modal({ open, title, children, onClose }: ModalProps) {
   )
 }
 
-export default function App() {
-  const [action, setAction] = useState<Action | null>(null)
+function App() {
+  const [action, setAction] = useState(null) // 'pet' | 'feed' | 'quit' | null
   const [open, setOpen] = useState(false)
-  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState(null)
   const [reaction, setReaction] = useState('')
-  const {
-    enabled: musicOn,
-    toggle: toggleMusic,
-    supported: musicSupported,
-    loop: musicLoop,
-    setLoop: setMusicLoop,
-    melodyId,
-    setMelodyId,
-    melodies,
-  } = useMidiMusic()
+  const { enabled: musicOn, toggle: toggleMusic, supported: musicSupported } = useMidiMusic()
 
   // Eagerly import any images placed in the top-level photos/ folder
-  const imageUrls = useMemo<string[]>(() => {
+  const imageUrls = useMemo(() => {
     const modules = import.meta.glob('../photos/*.{png,jpg,jpeg,webp,gif}', {
       query: '?url',
       import: 'default',
       eager: true,
-    }) as Record<string, string>
-
+    })
     return Object.values(modules)
   }, [])
 
-  const titleFor = (a: Action | null) => {
+  const titleFor = (a) => {
     switch (a) {
       case 'pet':
         return 'You pet Mochi! 🐾'
@@ -88,8 +69,8 @@ export default function App() {
     }
   }
 
-  const messageFor = (a: Action) => {
-    const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)]
+  const messageFor = (a) => {
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
     switch (a) {
       case 'pet':
         return pick([
@@ -109,6 +90,8 @@ export default function App() {
           'Until next time. Mochi-Bär will be here.',
           'Bye for now — give Mochi a pet later!',
         ])
+      default:
+        return ''
     }
   }
 
@@ -118,7 +101,7 @@ export default function App() {
     return imageUrls[idx]
   }
 
-  const onChoose = (a: Action) => {
+  const onChoose = (a) => {
     setAction(a)
     setImageUrl(pickRandomImage())
     setReaction(messageFor(a))
@@ -138,7 +121,7 @@ export default function App() {
         <header>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Mochi-Bär</h1>
           <p className="mt-2 text-slate-200/80">A tiny Christmas surprise</p>
-          <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-4 flex justify-center">
             <button
               type="button"
               className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold backdrop-blur transition hover:border-lime-400 disabled:opacity-50"
@@ -149,32 +132,6 @@ export default function App() {
             >
               Music: {musicOn ? 'On' : 'Off'}
             </button>
-
-            <label className="flex items-center gap-2 text-sm text-slate-200/80">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-white/20 bg-slate-950/60"
-                checked={musicLoop}
-                onChange={(e) => setMusicLoop(e.target.checked)}
-                disabled={!musicSupported}
-              />
-              <span className="whitespace-nowrap">Loop music</span>
-            </label>
-
-            <label className="flex items-center gap-2 text-sm text-slate-200/80">
-              <span className="whitespace-nowrap">Melody</span>
-              <select
-                className="rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 backdrop-blur transition hover:border-lime-400"
-                value={melodyId}
-                onChange={(e) => setMelodyId(e.target.value as typeof melodyId)}
-              >
-                {melodies.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </label>
           </div>
         </header>
 
@@ -196,11 +153,7 @@ export default function App() {
           )}
         </div>
 
-        <div
-          className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3"
-          role="group"
-          aria-label="Choose an action"
-        >
+        <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-3" role="group" aria-label="Choose an action">
           <button
             className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
             onClick={() => onChoose('pet')}
@@ -233,3 +186,5 @@ export default function App() {
     </div>
   )
 }
+
+export default App

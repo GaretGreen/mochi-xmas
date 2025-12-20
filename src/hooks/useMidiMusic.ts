@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-type FestiveMusic = {
+type Music = {
   enabled: boolean
   toggle: () => void
   supported: boolean
+  loop: boolean
+  setLoop: (loop: boolean) => void
   melodyId: MelodyId
   setMelodyId: (id: MelodyId) => void
   melodies: ReadonlyArray<{ id: MelodyId; label: string }>
@@ -114,7 +116,7 @@ const BUTTERCUP_MEME_PART: Step[] = [
 
 const DEJA_VU_MEME_PART: Step[] = [
   // "De-ja Vu!"
-  { note: 'C5', beats: 1 },
+  { note: 'C5', beats: 0.5 },
   { note: 'D5', beats: 1 },
   { note: 'Eb5', beats: 2 },
 
@@ -210,17 +212,24 @@ function playMeowNote(ctx: AudioContext, out: AudioNode, freqHz: number, t0: num
   noise.stop(t0 + 0.03)
 }
 
-export default function useFestiveMusic(): FestiveMusic {
+export default function useMidiMusic(): Music {
   const [enabled, setEnabled] = useState(false)
+  const [loop, setLoop] = useState(true)
   const [melodyId, setMelodyId] = useState<MelodyId>('jingle-bells')
   const ctxRef = useRef<AudioContext | null>(null)
   const gainRef = useRef<GainNode | null>(null)
   const timerRef = useRef<number | null>(null)
+  const stopTimeoutRef = useRef<number | null>(null)
 
   const stop = useCallback(async () => {
     if (timerRef.current != null) {
       window.clearInterval(timerRef.current)
       timerRef.current = null
+    }
+
+    if (stopTimeoutRef.current != null) {
+      window.clearTimeout(stopTimeoutRef.current)
+      stopTimeoutRef.current = null
     }
 
     if (ctxRef.current) {
@@ -238,6 +247,11 @@ export default function useFestiveMusic(): FestiveMusic {
   const start = useCallback(async () => {
     const ctx = createAudioContext()
     if (!ctx) return
+
+    if (stopTimeoutRef.current != null) {
+      window.clearTimeout(stopTimeoutRef.current)
+      stopTimeoutRef.current = null
+    }
 
     const compressor = ctx.createDynamicsCompressor()
     compressor.threshold.value = -24
@@ -265,9 +279,40 @@ export default function useFestiveMusic(): FestiveMusic {
 
     let stepIndex = 0
     let nextTime = ctx.currentTime + 0.05
+    let stopQueued = false
+
+    const queueStop = (stopAtTime: number) => {
+      if (stopQueued) return
+      stopQueued = true
+
+      if (timerRef.current != null) {
+        window.clearInterval(timerRef.current)
+        timerRef.current = null
+      }
+
+      const msUntilStop = Math.max(0, Math.ceil((stopAtTime - ctx.currentTime) * 1000))
+      stopTimeoutRef.current = window.setTimeout(() => {
+        // Fade quickly to avoid an abrupt cut.
+        try {
+          const now = ctx.currentTime
+          gain.gain.cancelScheduledValues(now)
+          gain.gain.setTargetAtTime(0.0001, now, 0.02)
+        } catch {
+          // ignore
+        }
+
+        void stop()
+      }, msUntilStop)
+    }
 
     const schedule = () => {
-      while (nextTime < ctx.currentTime + lookAheadSec) {
+      while (!stopQueued && nextTime < ctx.currentTime + lookAheadSec) {
+        if (stepIndex >= melody.steps.length) {
+          // Non-looping mode: we're done.
+          queueStop(nextTime + 0.08)
+          return
+        }
+
         const step = melody.steps[stepIndex]
         const stepSec = step.beats * beatSec
 
@@ -278,7 +323,14 @@ export default function useFestiveMusic(): FestiveMusic {
         }
 
         nextTime += stepSec
-        stepIndex = (stepIndex + 1) % melody.steps.length
+
+        stepIndex += 1
+        if (loop) {
+          stepIndex = stepIndex % melody.steps.length
+        } else if (stepIndex >= melody.steps.length) {
+          // Let the last scheduled note/rhythm ring a tiny bit.
+          queueStop(nextTime + 0.08)
+        }
       }
     }
 
@@ -292,7 +344,7 @@ export default function useFestiveMusic(): FestiveMusic {
     }
 
     timerRef.current = window.setInterval(schedule, tickMs)
-  }, [melodyId])
+  }, [loop, melodyId, stop])
 
   useEffect(() => {
     if (!enabled) {
@@ -319,6 +371,8 @@ export default function useFestiveMusic(): FestiveMusic {
     enabled,
     toggle,
     supported,
+    loop,
+    setLoop,
     melodyId,
     setMelodyId,
     melodies: MELODIES.map(({ id, label }) => ({ id, label })),
