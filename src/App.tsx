@@ -105,9 +105,11 @@ export default function App() {
         ])
       case 'quit':
         return pick([
-          'Thanks for playing — come back anytime.',
-          'Until next time. Mochi-Bär will be here.',
-          'Bye for now — give Mochi a pet later!',
+          "You can't leave yet — you haven't pet Mochi enough!",
+          "Not so fast… you can't leave yet. Mochi still needs more pets!",
+          "You can't leave yet — Mochi-Bär demands additional scritches.",
+          "Nope! You can't leave yet. Pet Mochi a little more first.",
+          "Escape denied: you can't leave yet — you haven't pet Mochi enough.",
         ])
     }
   }
