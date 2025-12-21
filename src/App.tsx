@@ -166,7 +166,7 @@ export default function App() {
             <label className="flex items-center gap-2 text-sm text-slate-200/80">
               <span className="whitespace-nowrap">Melody</span>
               <select
-                className="rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 backdrop-blur transition hover:border-lime-400"
+                className="rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 backdrop-blur transition hover:border-lime-400 overflow-auto"
                 value={melodyId}
                 onChange={(e) => setMelodyId(e.target.value as typeof melodyId)}
               >

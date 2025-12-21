@@ -158,9 +158,9 @@ type Melody = {
 }
 
 const MELODIES: Melody[] = [
-  { id: 'jingle-bells', label: 'Jingle Bells', steps: JINGLE_BELLS, tempoBpm: 120 },
-  { id: 'buttercup-meme', label: 'Electrify My Heart', steps: BUTTERCUP_MEME_PART, tempoBpm: 120 },
   { id: 'deja-vu-meme', label: 'Deja Vu', steps: DEJA_VU_MEME_PART, tempoBpm: 155 },
+  { id: 'buttercup-meme', label: 'Electrify My Heart', steps: BUTTERCUP_MEME_PART, tempoBpm: 120 },
+  { id: 'jingle-bells', label: 'Jingle Bells', steps: JINGLE_BELLS, tempoBpm: 120 },
 ]
 
 function playMeowNote(ctx: AudioContext, out: AudioNode, freqHz: number, t0: number, durationSec: number) {
@@ -214,7 +214,7 @@ function playMeowNote(ctx: AudioContext, out: AudioNode, freqHz: number, t0: num
 
 export default function useMidiMusic(): Music {
   const [enabled, setEnabled] = useState(false)
-  const [loop, setLoop] = useState(true)
+  const [loop, setLoop] = useState(false)
   const [melodyId, setMelodyId] = useState<MelodyId>('jingle-bells')
   const ctxRef = useRef<AudioContext | null>(null)
   const gainRef = useRef<GainNode | null>(null)
