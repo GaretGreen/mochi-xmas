@@ -215,7 +215,7 @@ function playMeowNote(ctx: AudioContext, out: AudioNode, freqHz: number, t0: num
 export default function useMidiMusic(): Music {
   const [enabled, setEnabled] = useState(false)
   const [loop, setLoop] = useState(false)
-  const [melodyId, setMelodyId] = useState<MelodyId>('jingle-bells')
+  const [melodyId, setMelodyId] = useState<MelodyId>('deja-vu-meme')
   const ctxRef = useRef<AudioContext | null>(null)
   const gainRef = useRef<GainNode | null>(null)
   const timerRef = useRef<number | null>(null)

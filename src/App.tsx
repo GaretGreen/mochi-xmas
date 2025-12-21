@@ -24,7 +24,7 @@ function Modal({ open, title, children, onClose }: ModalProps) {
   if (!open) return null
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4"
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 overflow-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
@@ -184,7 +184,7 @@ export default function App() {
           {imageUrls.length ? (
             <img
               className="h-auto w-[min(420px,90vw)] rounded-2xl shadow-2xl"
-              src={imageUrls[0]}
+              src='/photos/xmas/merry-xmas.jpeg'
               alt="Mochi the cat"
               loading="eager"
             />
@@ -227,7 +227,7 @@ export default function App() {
 
         <Modal open={open} title={titleFor(action)} onClose={onClose}>
           {imageUrl ? (
-            <img className="mb-3 w-full rounded-xl" src={imageUrl} alt="Mochi reaction" loading="lazy" />
+            <img className="mb-3 mx-auto h-100 rounded-xl" src={imageUrl} alt="Mochi reaction" loading="lazy" />
           ) : null}
           <p>{reaction}</p>
         </Modal>
