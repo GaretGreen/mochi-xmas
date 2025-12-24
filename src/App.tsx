@@ -279,7 +279,12 @@ export default function App() {
 
         <Modal open={open} title={titleFor(action)} onClose={onClose}>
           {imageUrl ? (
-            <img className="mb-3 mx-auto h-100 rounded-md" src={imageUrl} alt="Mochi reaction" loading="lazy" />
+            <img
+              className="mb-3 mx-auto block max-h-100 max-w-full rounded-md"
+              src={imageUrl}
+              alt="Mochi reaction"
+              loading="lazy"
+            />
           ) : null}
           <p>{reaction}</p>
         </Modal>
