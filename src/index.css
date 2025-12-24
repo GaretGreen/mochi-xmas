@@ -22,23 +22,23 @@ body {
 }
 
 body {
-  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive;
 }
 
 @layer base {
   :root {
-    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive !important;
   }
 
   html,
   body {
-    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive !important;
   }
 
   *,
   *::before,
   *::after {
-    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive !important;
   }
 
   button,
@@ -47,7 +47,7 @@ body {
   textarea,
   optgroup,
   option {
-    font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+    font-family: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive !important;
   }
 
   button {
