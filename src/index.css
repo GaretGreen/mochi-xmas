@@ -53,4 +53,8 @@ body {
   button {
     cursor: pointer;
   }
+
+  label {
+    border-radius: 2px;
+  }
 }

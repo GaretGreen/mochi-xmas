@@ -100,22 +100,22 @@ const BUTTERCUP_MEME_PART: Step[] = [
   { note: "D5", beats: 0.5 },
   
   // Vocal: "my"
-  { note: "E5", beats: 1 },
+  { note: "E5", beats: 0.5 },
   
   // Vocal: "heart" (Holds for a moment)
-  { note: "Fs5", beats: 2 }, 
+  { note: "Fs5", beats: 1 }, 
   
   // Instrumental Synth Run ("Oh-oh-oh" / cascading melody)
-  { note: "E5", beats: 0.5 },
-  { note: "D5", beats: 0.5 },
-  { note: "B4", beats: 0.5 },
-  { note: "A4", beats: 2.5 }, // Held note
+  { note: "E5", beats: 1 },
+  { note: "D5", beats: 1 },
+  { note: "B4", beats: 1 },
+  { note: "A4", beats: 1 }, // Held note
   
   // Second part of the run (often included in the loop)
-  { note: "D5", beats: 0.5 },
-  { note: "B4", beats: 0.5 },
-  { note: "G4", beats: 0.5 },
-  { note: "Fs5", beats: 2 }, // Ends on the high F# again or resolves to G
+  { note: "D5", beats: 1 },
+  { note: "B4", beats: 1 },
+  { note: "G4", beats: 1 },
+  { note: "Fs4", beats: 2 }, // Ends on the high F# again or resolves to G
 ];
 
 const DEJA_VU_MEME_PART: Step[] = [
@@ -196,7 +196,7 @@ type Melody = {
 const MELODIES: Melody[] = [
   { id: 'deja-vu-meme', label: 'Deja Vu', steps: DEJA_VU_MEME_PART, tempoBpm: 155 },
   { id: 'buttercup-meme', label: 'Electrify My Heart', steps: BUTTERCUP_MEME_PART, tempoBpm: 120 },
-  { id: 'jingle-bells', label: 'Jingle Bells', steps: JINGLE_BELLS, tempoBpm: 120 },
+  { id: 'jingle-bells', label: 'Jingle Bells', steps: JINGLE_BELLS, tempoBpm: 140 },
   { id: 'mochi-baer-theme', label: 'Mochi-Bär Theme', steps: mochiBaerTheme, tempoBpm: 110 },
 ]
 

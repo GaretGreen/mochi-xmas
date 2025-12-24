@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { FaCog } from "react-icons/fa";
+import { IoMdClose } from 'react-icons/io';
 import Snowfall from './components/Snowfall'
 import useMidiMusic from './hooks/useMidiMusic'
 
@@ -36,7 +38,7 @@ function Modal({ open, title, children, onClose }: ModalProps) {
         <h2 id="modal-title" className="mb-2 text-xl font-semibold">{title}</h2>
         <div className="mb-4">{children}</div>
         <button
-          className="w-full rounded-xl bg-lime-500 px-4 py-3 font-semibold text-black transition hover:bg-lime-400"
+          className="w-full rounded-md bg-lime-500 px-4 py-3 font-semibold text-black transition hover:bg-lime-400"
           autoFocus
           onClick={onClose}
           aria-label="Close dialog"
@@ -54,6 +56,7 @@ export default function App() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [reaction, setReaction] = useState('')
   const [snowOn, setSnowOn] = useState(true)
+  const [controlsOpen, setControlsOpen] = useState(false)
   const {
     enabled: musicOn,
     toggle: toggleMusic,
@@ -137,58 +140,86 @@ export default function App() {
   return (
     <div className="min-h-dvh bg-slate-900 text-slate-100">
       {snowOn ? <Snowfall /> : null}
-      <div className="mx-auto w-full max-w-4xl px-4 py-10 text-center">
+
+      <button
+        type="button"
+        className="fixed right-3 top-3 z-50 h-11 w-11 rounded-2xl border border-white/15 bg-slate-950/70 text-2xl leading-none text-slate-100 backdrop-blur sm:hidden flex items-center justify-center shadow-2xl transition hover:border-lime-400"
+        aria-label={controlsOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={controlsOpen}
+        onClick={() => setControlsOpen((v) => !v)}
+      >
+       {controlsOpen ? <IoMdClose /> : <FaCog />}
+      </button>
+
+      <div
+        className={
+          `fixed left-2 right-2 top-2 z-40 flex-col gap-1.5 rounded-2xl border border-white/15 bg-slate-950/60 p-2 text-left text-xs text-slate-200/80 backdrop-blur ` +
+          `sm:left-auto sm:right-4 sm:top-4 sm:w-56 sm:gap-2 sm:p-3 sm:text-sm ` +
+          (controlsOpen ? 'flex sm:flex' : 'hidden sm:flex')
+        }
+      >
+        <label className="-mx-2 -my-1 flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-white/5 hover:text-slate-100">
+          <input
+            type="checkbox"
+            className="h-4 w-4 cursor-pointer rounded border-white/20 bg-slate-950/60 accent-lime-400 transition-shadow hover:ring hover:ring-lime-400"
+            checked={snowOn}
+            onChange={(e) => setSnowOn(e.target.checked)}
+          />
+          <span className="whitespace-nowrap">Snowfall</span>
+        </label>
+
+        <label
+          className="-mx-2 -my-1 flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-white/5 hover:text-slate-100"
+          title={musicSupported ? 'Toggle background music' : 'Audio not supported in this browser'}
+        >
+          <input
+            type="checkbox"
+            className="h-4 w-4 cursor-pointer rounded border-white/20 bg-slate-950/60 accent-lime-400 transition-shadow hover:ring hover:ring-lime-400"
+            checked={musicOn}
+            onChange={(e) => {
+              if (e.target.checked !== musicOn) toggleMusic()
+            }}
+            disabled={!musicSupported}
+          />
+          <span className="whitespace-nowrap">Music</span>
+        </label>
+
+        <label className="flex flex-col gap-1">
+          {/* <span className="whitespace-nowrap text-xs">Melody</span> */}
+          <select
+            className="w-full rounded-md border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 backdrop-blur transition hover:border-lime-400"
+            value={melodyId}
+            onChange={(e) => setMelodyId(e.target.value as typeof melodyId)}
+            disabled={!musicSupported}
+          >
+            {melodies.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="-mx-2 -my-1 flex cursor-pointer select-none items-center gap-2 rounded-md px-2 py-1 transition-colors hover:bg-white/5 hover:text-slate-100">
+          <input
+            type="checkbox"
+            className="h-4 w-4 cursor-pointer rounded border-white/20 bg-slate-950/60 accent-lime-400 transition-shadow hover:ring hover:ring-lime-400"
+            checked={musicLoop}
+            onChange={(e) => setMusicLoop(e.target.checked)}
+            disabled={!musicSupported}
+          />
+          <span className="whitespace-nowrap">Loop music</span>
+        </label>
+      </div>
+      <div
+        className={
+          `mx-auto w-full max-w-4xl px-4 pb-10 text-center ` +
+          (controlsOpen ? 'pt-28 sm:pt-10' : 'pt-16 sm:pt-10')
+        }
+      >
         <header>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">Mochi-Bär</h1>
           <p className="mt-2 text-slate-200/80">A tiny Christmas surprise</p>
-          <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <label className="flex items-center gap-2 text-sm text-slate-200/80">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-white/20 bg-slate-950/60"
-                checked={snowOn}
-                onChange={(e) => setSnowOn(e.target.checked)}
-              />
-              <span className="whitespace-nowrap">Snowfall</span>
-            </label>
-
-            <button
-              type="button"
-              className="rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold backdrop-blur transition hover:border-lime-400 disabled:opacity-50"
-              onClick={toggleMusic}
-              aria-pressed={musicOn}
-              disabled={!musicSupported}
-              title={musicSupported ? 'Toggle background music' : 'Audio not supported in this browser'}
-            >
-              Music: {musicOn ? 'On' : 'Off'}
-            </button>
-
-            <label className="flex items-center gap-2 text-sm text-slate-200/80">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-white/20 bg-slate-950/60"
-                checked={musicLoop}
-                onChange={(e) => setMusicLoop(e.target.checked)}
-                disabled={!musicSupported}
-              />
-              <span className="whitespace-nowrap">Loop music</span>
-            </label>
-
-            <label className="flex items-center gap-2 text-sm text-slate-200/80">
-              <span className="whitespace-nowrap">Melody</span>
-              <select
-                className="rounded-xl border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 backdrop-blur transition hover:border-lime-400 overflow-auto"
-                value={melodyId}
-                onChange={(e) => setMelodyId(e.target.value as typeof melodyId)}
-              >
-                {melodies.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
         </header>
 
         <div className="mt-8 flex justify-center">
@@ -215,30 +246,30 @@ export default function App() {
           aria-label="Choose an action"
         >
           <button
-            className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
+            className="rounded-md border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
             onClick={() => onChoose('pet')}
           >
             Pet Mochi
           </button>
           <button
-            className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
+            className="rounded-md border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
             onClick={() => onChoose('feed')}
           >
             Feed Mochi
           </button>
           <button
-            className="rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
+            className="rounded-md border border-white/15 bg-white/5 px-4 py-3 text-lg font-semibold backdrop-blur transition hover:-translate-y-0.5 hover:border-lime-400"
             onClick={() => onChoose('quit')}
           >
             Quit
           </button>
         </div>
 
-        <footer className="mt-10 text-sm text-slate-200/60">Made with ❤️ for Mochi</footer>
+        <footer className="mt-10 text-sm text-slate-200/60">Made with ❤️ for Mochibär Appreciation Cave members</footer>
 
         <Modal open={open} title={titleFor(action)} onClose={onClose}>
           {imageUrl ? (
-            <img className="mb-3 mx-auto h-100 rounded-xl" src={imageUrl} alt="Mochi reaction" loading="lazy" />
+            <img className="mb-3 mx-auto h-100 rounded-md" src={imageUrl} alt="Mochi reaction" loading="lazy" />
           ) : null}
           <p>{reaction}</p>
         </Modal>
