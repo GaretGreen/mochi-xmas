@@ -79,6 +79,16 @@ export default function App() {
     return Object.values(modules)
   }, [])
 
+  const xmasImageUrls = useMemo<string[]>(() => {
+    const modules = import.meta.glob('../photos/xmas/*.{png,jpg,jpeg,webp,gif}', {
+      query: '?url',
+      import: 'default',
+      eager: true,
+    }) as Record<string, string>
+
+    return Object.values(modules)
+  }, [])
+
   const titleFor = (a: Action | null) => {
     switch (a) {
       case 'pet':
@@ -226,7 +236,7 @@ export default function App() {
           {imageUrls.length ? (
             <img
               className="h-auto w-[min(420px,90vw)] rounded-2xl shadow-2xl"
-              src='/photos/xmas/merry-xmas.jpeg'
+              src={xmasImageUrls[0]}
               alt="Mochi the cat"
               loading="eager"
             />
