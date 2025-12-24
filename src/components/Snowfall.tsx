@@ -19,16 +19,16 @@ function mulberry32(seed: number) {
   }
 }
 
-export default function Snowfall({ count = 40 }: { count?: number }) {
+export default function Snowfall({ count = 70 }: { count?: number }) {
   const flakes = useMemo<Snowflake[]>(() => {
     return Array.from({ length: count }, (_, i) => {
       const rnd = mulberry32(i + 1)
-      const size = 2 + rnd() * 5
+      const size = 3 + rnd() * 6
       const left = rnd() * 100
       const fallDuration = 7 + rnd() * 10
       const fallDelay = -rnd() * fallDuration
       const swayDuration = 3 + rnd() * 4
-      const opacity = 0.35 + rnd() * 0.5
+      const opacity = 0.55 + rnd() * 0.4
 
       return {
         id: i,
@@ -43,11 +43,11 @@ export default function Snowfall({ count = 40 }: { count?: number }) {
   }, [count])
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-10 overflow-hidden" aria-hidden="true">
+    <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden select-none" aria-hidden="true">
       {flakes.map((f) => (
         <div
           key={f.id}
-          className="absolute top-[-10vh] animate-snow-sway"
+          className="absolute -top-12 animate-snow-sway"
           style={{
             left: `${f.left}%`,
             animationDuration: `${f.swayDuration}s`,
@@ -55,7 +55,7 @@ export default function Snowfall({ count = 40 }: { count?: number }) {
           }}
         >
           <div
-            className="h-2 w-2 animate-snow-fall rounded-full bg-white/90 blur-[0.2px]"
+            className="animate-snow-fall rounded-full bg-white/95 shadow-sm shadow-white/30 blur-[0.35px]"
             style={{
               width: `${f.size}px`,
               height: `${f.size}px`,

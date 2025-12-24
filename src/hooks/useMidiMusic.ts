@@ -21,6 +21,7 @@ type NoteName =
   | 'D4'
   | 'E4'
   | 'F4'
+  | 'Fs4'
   | 'G4'
   | 'A4'
   | 'B4'
@@ -32,12 +33,14 @@ type NoteName =
   | 'Fs5'
   | 'F5'
   | 'G5'
+  | 'A5'
 
 const NOTE_HZ: Record<NoteName, number> = {
   C4: 261.63,
   D4: 293.66,
   E4: 329.63,
   F4: 349.23,
+  Fs4: 369.99,
   G4: 392.0,
   A4: 440.0,
   B4: 493.88,
@@ -49,6 +52,7 @@ const NOTE_HZ: Record<NoteName, number> = {
   Fs5: 739.99,
   F5: 698.46,
   G5: 783.99,
+  A5: 880.0,
 }
 
 type Step = { note: NoteName | null; beats: number }
@@ -148,7 +152,39 @@ const DEJA_VU_MEME_PART: Step[] = [
   { note: null, beats: 1 },
 ]
 
-type MelodyId = 'jingle-bells' | 'buttercup-meme' | 'deja-vu-meme'
+const mochiBaerTheme: Step[] = [
+  // Phrase 1: "Mo - chi - Bär" (0:00 - 0:02)
+  // Slower, heavy feel
+  { note: "A5", beats: 1 },    // "Mo"
+  { note: "Fs5", beats: 0.5 }, // "chi"
+  { note: "A5", beats: 2 },    // "Bär" (Held)
+
+  // Phrase 2: "ist ein klei-ner Bär" (0:02 - 0:03)
+  // Fast run (Eighth notes)
+  { note: "A5", beats: 1 },    // "ist"
+  { note: "Fs5", beats: 0.5 }, // "ein"
+  { note: "E5", beats: 0.5 },  // "klei"
+  { note: "Fs5", beats: 0.5 }, // "ner"
+  { note: "D5", beats: 2 },    // "Bär"
+
+  // Phrase 3: "Sie - ist - süß" (0:03 - 0:05)
+  // Returns to slow tempo
+  { note: "A5", beats: 1 },    // "Sie"
+  { note: "Fs5", beats: 0.5 }, // "ist"
+  { note: "A5", beats: 2 },    // "süß" (Held)
+
+  // Phrase 4: "und ein biss-chen schwer" (0:05 - 0:06)
+  // Fast run again
+  { note: "A5", beats: 1 },    // "und"
+  { note: "Fs5", beats: 0.5 }, // "ein"
+  { note: "E5", beats: 0.5 },  // "biss"
+  { note: "Fs5", beats: 0.5 }, // "chen"
+  { note: "D5", beats: 2.5 },  // "schwer" (End)
+  
+  { note: null, beats: 1 },
+];
+
+type MelodyId = 'jingle-bells' | 'buttercup-meme' | 'deja-vu-meme' | 'mochi-baer-theme'
 
 type Melody = {
   id: MelodyId
@@ -161,6 +197,7 @@ const MELODIES: Melody[] = [
   { id: 'deja-vu-meme', label: 'Deja Vu', steps: DEJA_VU_MEME_PART, tempoBpm: 155 },
   { id: 'buttercup-meme', label: 'Electrify My Heart', steps: BUTTERCUP_MEME_PART, tempoBpm: 120 },
   { id: 'jingle-bells', label: 'Jingle Bells', steps: JINGLE_BELLS, tempoBpm: 120 },
+  { id: 'mochi-baer-theme', label: 'Mochi-Bär Theme', steps: mochiBaerTheme, tempoBpm: 110 },
 ]
 
 function playMeowNote(ctx: AudioContext, out: AudioNode, freqHz: number, t0: number, durationSec: number) {
