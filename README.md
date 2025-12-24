@@ -4,12 +4,12 @@ A tiny Christmas-present “game” for friends: you get three choices — pet M
 
 Festive extras:
 - Snowfall overlay.
-- Background music toggle (starts only after clicking due to browser autoplay rules).
+- MIDI music toggle (starts only after clicking due to browser autoplay rules).
 
 ## Add/replace Mochi photos
 - Drop images into the top-level `photos/` folder.
 - Supported formats: png, jpg/jpeg, webp, gif.
-- The app loads them via Vite’s `import.meta.glob('../photos/*.{png,jpg,jpeg,webp,gif}')` in `src/App.jsx`.
+- The app loads them via Vite’s `import.meta.glob('../photos/*.{png,jpg,jpeg,webp,gif}', { query: '?url', import: 'default', eager: true })` in `src/App.tsx`.
 
 ## Dev
     npm install
@@ -25,8 +25,13 @@ Festive extras:
 ## Deploy (GitHub Pages)
 This repo includes a GitHub Actions workflow that builds `dist/` and deploys it to GitHub Pages on pushes to `main`.
 
-In GitHub:
-- Settings → Pages → set Source to GitHub Actions.
+In GitHub (one-time setup):
+- Settings → Pages → Source: GitHub Actions
+- Settings → Actions → General → Workflow permissions: Read and write permissions
+
+Deploy:
+- Push/merge to `main` (or change the workflow branch if you use a different default branch)
+- GitHub → Actions → “Deploy to GitHub Pages” should run and publish the site
 
 Note: `vite.config.js` uses `base: './'` so the app works when served from a sub-path.
 
